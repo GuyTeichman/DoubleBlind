@@ -4,4 +4,4 @@
     :alt: logo
 
 
-DoubleBlind - blind and unblind microscopy files and images with DoubleBlind.
+DoubleBlind is a software tool that automatically and reversibly replaces file names with random strings to help experimenters quantify microscopy experiments blindly and maintain experimental integrity.
