@@ -1,0 +1,17 @@
+pip
+bump2version
+wheel
+coverage
+Sphinx
+twine
+coveralls
+py
+pytest
+pytest-runner
+sphinx_rtd_theme
+pytest-qt
+pytest-xvfb
+typing_extensions
+pyinstaller
+pyinstaller-hooks-contrib
+rst-to-myst
