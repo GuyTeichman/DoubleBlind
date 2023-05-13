@@ -1,8 +1,9 @@
+import functools
 from pathlib import Path
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
-from doubleblind import __version__, blinding
+from doubleblind import __version__, blinding, gui_style
 
 
 class HelpButton(QtWidgets.QToolButton):
@@ -252,10 +253,48 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMenuBar(self.menu_bar)
         self.setWindowTitle(f'DoubleBlind {__version__}')
 
+        self.font_name = 'Arial'
+        self.base_font_size = 11
+        self.dark_mode = False
+
+        self.update_style_sheet()
         self.init_menus()
 
     def init_menus(self):
-        pass
+        view_menu = self.menu_bar.addMenu('View')
+
+        self.dark_mode_action = QtGui.QAction("Dark mode")
+        self.dark_mode_action.setCheckable(True)
+        self.dark_mode_action.triggered.connect(self.update_dark_mode)
+
+        self.font_size_action = view_menu.addMenu('Font size')
+        group = QtGui.QActionGroup(self)
+        group.setExclusive(True)
+        for size in (8, 10, 11, 12, 14, 18, 24, 36, 48, 72):
+            action = QtGui.QAction(str(size), self)
+            action.setCheckable(True)
+            action.triggered.connect(functools.partial(self.update_font_size, size))
+            group.addAction(action)
+            self.font_size_action.addAction(action)
+            if self.base_font_size == size:
+                action.trigger()
+
+        view_menu.addActions([self.dark_mode_action])
+        help_menu = self.menu_bar.addMenu('Help')
+
+    @QtCore.pyqtSlot(bool)
+    def update_dark_mode(self, dark_mode: bool):
+        self.dark_mode = dark_mode
+        self.update_style_sheet()
+
+    @QtCore.pyqtSlot(bool)
+    def update_font_size(self, base_font_size: int, enabled: bool):
+        if enabled:
+            self.base_font_size = base_font_size
+            self.update_style_sheet()
+
+    def update_style_sheet(self):
+        self.setStyleSheet(gui_style.get_stylesheet(self.font_name, self.base_font_size, self.dark_mode))
 
     def check_for_updates(self, confirm_updated: bool = True):
         pass

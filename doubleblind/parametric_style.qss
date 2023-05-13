@@ -1,0 +1,56 @@
+/* style for window types : */
+
+QWidget {
+font: $FONTPLACEHOLDER;
+font-size: $FONTSIZEPLACEHOLDER*1;
+}
+
+MainWindow{
+font: $FONTPLACEHOLDER;
+font-size: $FONTSIZEPLACEHOLDER*2;
+}
+
+
+TabPage {
+font: $FONTPLACEHOLDER;
+font-size: $FONTSIZEPLACEHOLDER*2;
+}
+
+QTabBar {
+font: $FONTPLACEHOLDER;
+font-weight: bold;
+font-size: $FONTSIZEPLACEHOLDER;
+}
+
+
+DataView > QLabel {
+font: $FONTPLACEHOLDER;
+font-size: $FONTSIZEPLACEHOLDER*2;
+}
+
+
+QGroupBox {
+font: $FONTPLACEHOLDER;
+font-weight: bold;
+font-size: $FONTSIZEPLACEHOLDER*1;
+}
+
+
+QLabel {
+font: $FONTPLACEHOLDER;
+font-size: $FONTSIZEPLACEHOLDER*1;
+}
+
+
+QPushButton {
+font: $FONTPLACEHOLDER;
+font-weight: bold;
+font-size: $FONTSIZEPLACEHOLDER*1;
+}
+
+QToolButton {
+font: $FONTPLACEHOLDER;
+font-weight: bold;
+font-size: $FONTSIZEPLACEHOLDER*1.5;
+}
+
