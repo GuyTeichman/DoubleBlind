@@ -34,27 +34,29 @@ def unpad(padded):
 
 
 def encode_filename(plaintext):
+    # key is constant to reduce filename length
+    key = b'\x0cm\xa3\xf7\x1e\xd4\x8f\xce\xb5& \xe4\xa4\xeaE\xcd\xaf\x80V\x7f_\x19\xce\xc7}\xa7-\xc6\x91\xc6\xbe~'
     text, is_compressed = compress_if_shorter(plaintext)
     padded = pad(text)
-    key = os.urandom(32)
     iv = os.urandom(16)
     cipher_obj = Cipher(algorithms.AES(key), modes.CBC(iv))
     encryptor = cipher_obj.encryptor()
     ciphertext = encryptor.update(padded) + encryptor.finalize()
-    slugified = base64.urlsafe_b64encode(key + iv + ciphertext).decode('ascii').rstrip('=')
+    slugified = base64.urlsafe_b64encode(iv + ciphertext).decode('ascii').rstrip('=')
     return slugified + ('C' if is_compressed else 'R')
 
 
 def decode_filename(ciphertext):
+    # key is constant to reduce filename length
+    key = b'\x0cm\xa3\xf7\x1e\xd4\x8f\xce\xb5& \xe4\xa4\xeaE\xcd\xaf\x80V\x7f_\x19\xce\xc7}\xa7-\xc6\x91\xc6\xbe~'
     is_compressed = ciphertext.endswith('C')
     ciphertext = ciphertext[:-1]
     ciphertext += '=' * (-len(ciphertext) % 4)
     ciphertext = base64.urlsafe_b64decode(ciphertext.encode('ascii'))
-    key = ciphertext[:32]
-    iv = ciphertext[32:48]
+    iv = ciphertext[:16]
     cipher_obj = Cipher(algorithms.AES(key), modes.CBC(iv))
     decryptor = cipher_obj.decryptor()
-    padded_plaintext = (decryptor.update(ciphertext[48:]) + decryptor.finalize())
+    padded_plaintext = (decryptor.update(ciphertext[16:]) + decryptor.finalize())
     plaintext = decompress(unpad(padded_plaintext)) if is_compressed else unpad(padded_plaintext).decode()
     return plaintext
 
