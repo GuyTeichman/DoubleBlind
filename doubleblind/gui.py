@@ -225,10 +225,16 @@ class DecodeTab(TabPage):
 
     def run(self):
         encoder = self.get_encoder()
-        encoder.unblind(self.other_files.path())
+        others = encoder.unblind(self.other_files.path())
         msg = QtWidgets.QMessageBox(self)
         msg.setWindowTitle('Data un-blinded')
-        msg.setText('Data was un-blinded successfully!')
+        text = 'Data was un-blinded successfully!'
+        if len(others) > 0:
+            text += '\nThe folli=owing additional data files were unblinded:\n\n' + \
+                    '\n'.join([f"'{item.as_posix()}'" for item in others if item is not None])
+            print(others)
+            print(text)
+        msg.setText(text)
         msg.exec()
 
 

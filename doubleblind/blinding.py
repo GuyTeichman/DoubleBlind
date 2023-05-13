@@ -5,7 +5,7 @@ import warnings
 from pathlib import Path
 from typing import Union, Literal
 
-from doubleblind import utils
+from doubleblind import utils, editing
 
 
 class GenericCoder:
@@ -33,7 +33,7 @@ class GenericCoder:
                      item.suffix.lower() not in self.excluded_file_types]
         return files
 
-    def write_outfile(self, decode_dict: dict, output_dir:Union[Path,None] = None):
+    def write_outfile(self, decode_dict: dict, output_dir: Union[Path, None] = None):
         if output_dir is None:
             output_dir = self.root_dir
         else:
@@ -44,7 +44,7 @@ class GenericCoder:
             for pair in zip(decode_dict['encoded_name'], decode_dict['decoded_name']):
                 writer.writerow(pair)
 
-    def blind(self, output_dir:Union[Path,None] = None):
+    def blind(self, output_dir: Union[Path, None] = None):
         assert self.root_dir.exists()
         decode_dict = {'encoded_name': [], 'decoded_name': []}
 
@@ -60,8 +60,20 @@ class GenericCoder:
         finally:
             self.write_outfile(decode_dict, output_dir)
 
-    def _unblind_additionals(self, additional_files: Path, decode_dict: dict):
-        pass
+    @staticmethod
+    def _unblind_additionals(additional_files: Path, decode_dict: dict):
+        unblinded = []
+        if additional_files is None:
+            return unblinded
+
+        for item in additional_files.iterdir():
+            if not item.is_file():
+                continue
+            if item.suffix in {'.xls', '.xlsx'}:
+                unblinded.append(editing.edit_excel(item, decode_dict))
+            elif item.suffix in {'.csv', '.tsv', '.txt', '.json'}:
+                unblinded.append(editing.edit_text(item, decode_dict))
+        return unblinded
 
     def unblind(self, additional_files: Path):
         decode_dict = {}
@@ -79,8 +91,10 @@ class GenericCoder:
                 n_decoded += 1
             except ValueError:
                 warnings.warn(f'Could not decode file "{name}"')
-            self._unblind_additionals(additional_files, decode_dict)
+
+        others = self._unblind_additionals(additional_files, decode_dict)
         print("Filenames decoded successfully")
+        return others
 
 
 class ImageCoder(GenericCoder):
@@ -101,7 +115,7 @@ class VSICoder(GenericCoder):
             files = [item for item in self.root_dir.iterdir() if item.is_file() and item.suffix.lower() == '.vsi']
         return files
 
-    def blind(self, output_dir:Union[Path,Literal[None]] = None):
+    def blind(self, output_dir: Union[Path, Literal[None]] = None):
         assert self.root_dir.exists()
         decode_dict = {'encoded_name': [], 'decoded_name': []}
 
@@ -147,5 +161,7 @@ class VSICoder(GenericCoder):
                 n_decoded += 1
             except ValueError:
                 warnings.warn(f'Could not decode file "{name}"')
-            self._unblind_additionals(additional_files, decode_dict)
+
+        others = self._unblind_additionals(additional_files, decode_dict)
         print("Filenames decoded successfully")
+        return others
