@@ -1,7 +1,7 @@
 from PyQt6 import QtCore,QtWidgets, QtGui
 from pathlib import Path
 import sys
-from doubleblind import blinding,utils, gui
+from doubleblind import gui
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])

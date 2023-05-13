@@ -22,7 +22,7 @@ class GenericCoder:
     def get_file_list(self):
         if self.recursive:
             files = []
-            for file_path in self.root_dir.glob('*'):
+            for file_path in self.root_dir.glob('**/*'):
                 if file_path.is_file():
                     if any(fnmatch.fnmatch(file_path.name, f'*{fmt}') for fmt in self.included_file_types) and \
                             not any(fnmatch.fnmatch(file_path.name, f'*{fmt}') for fmt in self.excluded_file_types):
@@ -33,13 +33,18 @@ class GenericCoder:
                      item.suffix.lower() not in self.excluded_file_types]
         return files
 
-    def write_outfile(self, decode_dict: dict):
-        with open(self.root_dir.joinpath(self.FILENAME), 'w') as outfile:
+    def write_outfile(self, decode_dict: dict, output_dir:Union[Path,None] = None):
+        if output_dir is None:
+            output_dir = self.root_dir
+        else:
+            assert output_dir.is_dir() and output_dir.exists(), f"Invalid output_dir!"
+        with open(output_dir.joinpath(self.FILENAME), 'w', newline='') as outfile:
             writer = csv.writer(outfile)
             writer.writerow(decode_dict.keys())
-            writer.writerows(zip(decode_dict['encoded_name'], decode_dict['decoded_name']))
+            for pair in zip(decode_dict['encoded_name'], decode_dict['decoded_name']):
+                writer.writerow(pair)
 
-    def blind(self):
+    def blind(self, output_dir:Union[Path,None] = None):
         assert self.root_dir.exists()
         decode_dict = {'encoded_name': [], 'decoded_name': []}
 
@@ -53,9 +58,13 @@ class GenericCoder:
                 decode_dict['encoded_name'].append(new_name)
                 decode_dict['decoded_name'].append(name)
         finally:
-            self.write_outfile(decode_dict)
+            self.write_outfile(decode_dict, output_dir)
 
-    def unblind(self):
+    def _unblind_additionals(self, additional_files: Path, decode_dict: dict):
+        pass
+
+    def unblind(self, additional_files: Path):
+        decode_dict = {}
         n_decoded = 0
         for file in self.get_file_list():
             name = file.stem
@@ -63,12 +72,14 @@ class GenericCoder:
 
             try:
                 old_name = utils.decode_filename(name)
+                decode_dict[name] = old_name
                 old_file_path = file.parent.joinpath(f"{old_name}{file.suffix}")
 
                 file_path.replace(old_file_path)
                 n_decoded += 1
             except ValueError:
                 warnings.warn(f'Could not decode file "{name}"')
+            self._unblind_additionals(additional_files, decode_dict)
         print("Filenames decoded successfully")
 
 
@@ -90,7 +101,7 @@ class VSICoder(GenericCoder):
             files = [item for item in self.root_dir.iterdir() if item.is_file() and item.suffix.lower() == '.vsi']
         return files
 
-    def blind(self):
+    def blind(self, output_dir:Union[Path,Literal[None]] = None):
         assert self.root_dir.exists()
         decode_dict = {'encoded_name': [], 'decoded_name': []}
 
@@ -115,9 +126,10 @@ class VSICoder(GenericCoder):
                 decode_dict['encoded_name'].append(new_name)
                 decode_dict['decoded_name'].append(name)
         finally:
-            self.write_outfile(decode_dict)
+            self.write_outfile(decode_dict, output_dir)
 
-    def unblind(self):
+    def unblind(self, additional_files: Path):
+        decode_dict = {}
         n_decoded = 0
         for file in self.get_file_list():
             name = file.stem
@@ -126,6 +138,7 @@ class VSICoder(GenericCoder):
 
             try:
                 old_name = utils.decode_filename(name)
+                decode_dict[name] = old_name
                 old_file_path = file.parent.joinpath(f"{old_name}{file.suffix}")
                 old_conj_folder_path = conj_folder_path.parent.joinpath(f"_{old_name}_")
 
@@ -134,4 +147,5 @@ class VSICoder(GenericCoder):
                 n_decoded += 1
             except ValueError:
                 warnings.warn(f'Could not decode file "{name}"')
+            self._unblind_additionals(additional_files, decode_dict)
         print("Filenames decoded successfully")
