@@ -40,23 +40,34 @@ class GenericCoder:
             assert output_dir.is_dir() and output_dir.exists(), f"Invalid output_dir!"
         with open(output_dir.joinpath(self.FILENAME), 'w', newline='') as outfile:
             writer = csv.writer(outfile)
-            writer.writerow(decode_dict.keys())
-            for pair in zip(decode_dict['encoded_name'], decode_dict['decoded_name']):
-                writer.writerow(pair)
+            writer.writerow(['encoded_name', 'decoded_name', 'file_path'])
+            for coded, (decoded, path) in decode_dict.items():
+                writer.writerow([coded, decoded, path])
+
+    @staticmethod
+    def get_coded_name(file_path: Path, original_name: str, decode_dict: dict):
+        new_name = utils.encode_filename(original_name)
+        new_file_path = file_path.parent.joinpath(f"{new_name}{file_path.suffix}")
+
+        while new_name in decode_dict or new_file_path.exists():  # ensure no two files have the same coded name
+            new_name = utils.encode_filename(original_name)
+            new_file_path = file_path.parent.joinpath(f"{new_name}{file_path.suffix}")
+
+        return new_name
 
     def blind(self, output_dir: Union[Path, None] = None):
         assert self.root_dir.exists()
-        decode_dict = {'encoded_name': [], 'decoded_name': []}
+        decode_dict = {}
 
         try:
             for file in self.get_file_list():
                 name = file.stem
                 file_path = file
-                new_name = utils.encode_filename(name)
+                new_name = self.get_coded_name(file, name, decode_dict)
+
                 new_file_path = file.parent.joinpath(f"{new_name}{file.suffix}")
                 file_path.replace(new_file_path)
-                decode_dict['encoded_name'].append(new_name)
-                decode_dict['decoded_name'].append(name)
+                decode_dict[new_name] = (name, file.as_posix())
         finally:
             self.write_outfile(decode_dict, output_dir)
 
@@ -117,7 +128,7 @@ class VSICoder(GenericCoder):
 
     def blind(self, output_dir: Union[Path, Literal[None]] = None):
         assert self.root_dir.exists()
-        decode_dict = {'encoded_name': [], 'decoded_name': []}
+        decode_dict = {}
 
         try:
             for file in self.get_file_list():
@@ -129,16 +140,15 @@ class VSICoder(GenericCoder):
                     warnings.warn(f'Could not find the conjugate folder of file "{name}"')
                     continue
 
-                new_name = utils.encode_filename(name)
-                new_file_path = file.parent.joinpath(f"{new_name}{file.suffix}")
+                new_name = self.get_coded_name(file, name, decode_dict)
 
+                new_file_path = file.parent.joinpath(f"{new_name}{file.suffix}")
                 new_conj_folder_path = conj_folder_path.parent.joinpath(f"_{new_name}_")
 
                 file_path.replace(new_file_path)
                 conj_folder_path.replace(new_conj_folder_path)
 
-                decode_dict['encoded_name'].append(new_name)
-                decode_dict['decoded_name'].append(name)
+                decode_dict[new_name] = (name, file.as_posix())
         finally:
             self.write_outfile(decode_dict, output_dir)
 
