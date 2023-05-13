@@ -261,13 +261,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_menus()
 
     def init_menus(self):
-        view_menu = self.menu_bar.addMenu('View')
+        view_menu = self.menu_bar.addMenu('&View')
 
-        self.dark_mode_action = QtGui.QAction("Dark mode")
+        self.dark_mode_action = QtGui.QAction("&Dark mode")
         self.dark_mode_action.setCheckable(True)
         self.dark_mode_action.triggered.connect(self.update_dark_mode)
 
-        self.font_size_action = view_menu.addMenu('Font size')
+        self.font_size_action = view_menu.addMenu('&Font size')
         group = QtGui.QActionGroup(self)
         group.setExclusive(True)
         for size in (8, 10, 11, 12, 14, 18, 24, 36, 48, 72):
@@ -280,7 +280,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 action.trigger()
 
         view_menu.addActions([self.dark_mode_action])
-        help_menu = self.menu_bar.addMenu('Help')
+        help_menu = self.menu_bar.addMenu('&Help')
 
     @QtCore.pyqtSlot(bool)
     def update_dark_mode(self, dark_mode: bool):
