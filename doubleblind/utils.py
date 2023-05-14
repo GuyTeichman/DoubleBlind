@@ -1,10 +1,14 @@
+import requests
 import base64
+import json
 import mimetypes
 import os
 from typing import Tuple
 
 import smaz
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+from doubleblind import __version__
 
 mimetypes.init()
 BLOCK_SIZE = 16
@@ -65,3 +69,23 @@ def get_extensions_for_type(general_type) -> str:
     for ext in mimetypes.types_map:
         if mimetypes.types_map[ext].split('/')[0] == general_type:
             yield ext
+
+
+def parse_version(version: str):
+    split = version.split('.')
+    return [int(i) for i in split]
+
+
+def is_app_outdated():
+    installed_version = parse_version(__version__)
+    pypi_link = 'https://pypi.python.org/pypi/doubleblind/json'
+    try:
+        req = requests.get(pypi_link)
+    except (ConnectionError, requests.exceptions.ConnectionError, requests.exceptions.HTTPError):
+        return False
+    if req.status_code != 200:
+        return False
+    newest_version = parse_version(json.loads(req.text)['info']['version'])
+    if installed_version < newest_version:
+        return True
+    return False

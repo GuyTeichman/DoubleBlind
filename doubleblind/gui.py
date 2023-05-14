@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
+import utils
 from doubleblind import __version__, blinding, gui_style
 
 
@@ -358,7 +359,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setStyleSheet(gui_style.get_stylesheet(font_name, base_font_size, dark_mode))
 
     def check_for_updates(self, confirm_updated: bool = True):
-        pass
+        if utils.is_app_outdated():
+            reply = QtWidgets.QMessageBox.question(self, 'A new version is available',
+                                                   'A new version of DoubleBlind is available! '
+                                                   'Do you wish to download it?')
+            if reply == QtWidgets.QMessageBox.Yes:
+                url = QtCore.QUrl('https://github.com/GuyTeichman/DoubleBlind/releases/latest')
+                if not QtGui.QDesktopServices.openUrl(url):
+                    QtGui.QMessageBox.warning(self, 'Connection failed', 'Could not download new version')
+            return
+
+        if confirm_updated:
+            _ = QtWidgets.QMessageBox.information(self, 'You are using the latest version of DoubleBlind',
+                                                  f'Your version of DoubleBlind ({__version__}) is up to date!')
 
     def excepthook(self, exc_type, exc_value, exc_tb):  # pragma: no cover
         sys.__excepthook__(exc_type, exc_value, exc_tb)
