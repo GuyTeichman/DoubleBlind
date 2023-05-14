@@ -1,4 +1,4 @@
-.. image:: docs/source/doubleblind_splash_transparent.png
+.. image:: docs/source/doubleblind.png
     :target: https://guyteichman.github.io/DoubleBlind
     :width: 400
     :alt: logo

@@ -1,12 +1,15 @@
-from PyQt6 import QtCore,QtWidgets, QtGui
-from pathlib import Path
 import sys
+from pathlib import Path
+
+from PyQt6 import QtWidgets, QtGui
+
 from doubleblind import gui
 
-if __name__ == '__main__':
+
+def run():
     app = QtWidgets.QApplication([])
     app.setDesktopFileName('DoubleBlind')
-    icon_pth = str(Path(__file__).parent.parent.joinpath('favicon.ico').absolute())
+    icon_pth = str(Path(__file__).parent.joinpath('favicon.ico').absolute())
     app.setWindowIcon(QtGui.QIcon(icon_pth))
 
     window = gui.MainWindow()
@@ -15,3 +18,7 @@ if __name__ == '__main__':
     window.check_for_updates(False)
 
     sys.exit(app.exec())
+
+
+if __name__ == '__main__':
+    run()
