@@ -5,8 +5,8 @@ from pathlib import Path
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
-import utils
-from doubleblind import __version__, blinding, gui_style
+from doubleblind import __version__, blinding, gui_style, utils
+
 
 class TextWithCopyButton(QtWidgets.QWidget):
     __slots__ = {'text': 'text',
@@ -37,6 +37,7 @@ class TextWithCopyButton(QtWidgets.QWidget):
         cb.setText(self.text_edit.toPlainText())
         self.copied_label.setText('Copied to clipboard')
 
+
 class HowToCiteWindow(QtWidgets.QDialog):
     CITATION = """
     Teichman, G., Ewe, CK., and Rechavi, O. (2023).
@@ -44,6 +45,7 @@ class HowToCiteWindow(QtWidgets.QDialog):
     <br>
     <a href=https://guyteichman.github.io/DoubleBlind>https://guyteichman.github.io/DoubleBlind</a>
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         img_path = str(Path(__file__).parent.joinpath('splash_transparent.png'))
@@ -106,6 +108,7 @@ class AboutWindow(QtWidgets.QMessageBox):
         self.setWindowTitle("About DoubleBlind")
         self.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         self.buttonClicked.connect(self.close)
+
 
 class ErrorMessage(QtWidgets.QDialog):
     def __init__(self, exc_type, exc_value, exc_tb, parent=None):

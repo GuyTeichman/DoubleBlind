@@ -1,0 +1,10 @@
+recursive-include . *.rst *.ico *.png
+recursive-include . requirements*.txt
+
+recursive-include doubleblind *.png *.json *.qss *.R *.ico *.icns *.css *.js
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif *.ico *.xlsx *.txt *.csv *.tsv

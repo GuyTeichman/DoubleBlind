@@ -3,7 +3,7 @@ import fnmatch
 import itertools
 import warnings
 from pathlib import Path
-from typing import Union, Literal
+from typing import Union, Literal, Set
 
 from doubleblind import utils, editing
 
@@ -12,8 +12,8 @@ class GenericCoder:
     FILENAME = 'doubleblind_encoding.csv'
 
     def __init__(self, root_dir: Path, recursive: bool = True,
-                 included_file_types: Union[set[str], Literal['all']] = 'all',
-                 excluded_file_types: set[str] = frozenset()):
+                 included_file_types: Union[Set[str], Literal['all']] = 'all',
+                 excluded_file_types: Set[str] = frozenset()):
         self.root_dir = root_dir
         self.recursive = recursive
         self.included_file_types = included_file_types
