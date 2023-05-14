@@ -3,6 +3,10 @@
     :width: 400
     :alt: logo
 
+**Useful links:** `Documentation <https://guyteichman.github.io/DoubleBlind>`_ |
+`Source code <https://github.com/GuyTeichman/DoubleBlind>`_ |
+`Bug reports <https://github.com/GuyTeichman/DoubleBlind/issues>`_ | |pipimage| | |versionssupported| | |githubactions| | |downloads|
+
 
 DoubleBlind is a software tool that automatically and reversibly replaces file names with random strings to help experimenters quantify microscopy experiments blindly and maintain experimental integrity.
 
@@ -23,3 +27,18 @@ This ensures that the final data analysis is accurate and reliable.
 
 DoubleBlind is also designed to be easy to use, with a simple and intuitive interface that works on all operating systems.
 This ease of use is particularly important for experimenters who may not have extensive experience with software tools.
+
+
+.. |pipimage| image:: https://img.shields.io/pypi/v/doubleblind.svg
+    :target: https://pypi.python.org/pypi/doubleblind
+    :alt: PyPI version
+.. |downloads| image:: https://pepy.tech/badge/doubleblind
+    :target: https://pepy.tech/project/doubleblind
+    :alt: Downloads
+.. |versionssupported| image:: https://img.shields.io/pypi/pyversions/doubleblind.svg
+    :target: https://pypi.python.org/pypi/doubleblind
+    :alt: Python versions supported
+
+..  |githubactions| image:: https://github.com/guyteichman/DoubleBlind/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/GuyTeichman/DoubleBlind/actions/workflows/tests.yml
+    :alt: Build status
