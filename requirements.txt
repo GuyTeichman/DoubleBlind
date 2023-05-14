@@ -1,6 +1,0 @@
-PyQt6
-cryptography
-smaz-py3
-openpyxl
-qdarkstyle
-requests
