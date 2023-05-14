@@ -253,9 +253,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMenuBar(self.menu_bar)
         self.setWindowTitle(f'DoubleBlind {__version__}')
 
-        self.font_name = 'Arial'
-        self.base_font_size = 11
-        self.dark_mode = False
+        self.settings = QtCore.QSettings('DoubleBlind', 'DoubleBlind')
 
         self.update_style_sheet()
         self.init_menus()
@@ -265,7 +263,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.dark_mode_action = QtGui.QAction("&Dark mode")
         self.dark_mode_action.setCheckable(True)
+        if self.settings.value('dark_mode') == 'dark':
+            self.dark_mode_action.setChecked(True)
         self.dark_mode_action.triggered.connect(self.update_dark_mode)
+
 
         self.font_size_action = view_menu.addMenu('&Font size')
         group = QtGui.QActionGroup(self)
@@ -276,25 +277,35 @@ class MainWindow(QtWidgets.QMainWindow):
             action.triggered.connect(functools.partial(self.update_font_size, size))
             group.addAction(action)
             self.font_size_action.addAction(action)
-            if self.base_font_size == size:
+            if self.settings.value('base_font_size') == size:
                 action.trigger()
 
-        view_menu.addActions([self.dark_mode_action])
+        self.reset_action = QtGui.QAction('&Reset view settings')
+        self.reset_action.triggered.connect(self.clear_settings)
+
+        view_menu.addActions([self.dark_mode_action, self.reset_action])
         help_menu = self.menu_bar.addMenu('&Help')
 
+    def clear_settings(self):
+        self.settings.clear()
+        self.dark_mode_action.setChecked(False)
+        self.update_style_sheet()
     @QtCore.pyqtSlot(bool)
     def update_dark_mode(self, dark_mode: bool):
-        self.dark_mode = dark_mode
+        self.settings.setValue('dark_mode', 'dark' if dark_mode else 'light')
         self.update_style_sheet()
 
     @QtCore.pyqtSlot(bool)
     def update_font_size(self, base_font_size: int, enabled: bool):
         if enabled:
-            self.base_font_size = base_font_size
+            self.settings.setValue('base_font_size', base_font_size)
             self.update_style_sheet()
 
     def update_style_sheet(self):
-        self.setStyleSheet(gui_style.get_stylesheet(self.font_name, self.base_font_size, self.dark_mode))
+        font_name = self.settings.value('font_name', 'Arial')
+        base_font_size = self.settings.value('base_font_size', 11)
+        dark_mode = self.settings.value('dark_mode', 'light')
+        self.setStyleSheet(gui_style.get_stylesheet(font_name, base_font_size, dark_mode))
 
     def check_for_updates(self, confirm_updated: bool = True):
         pass

@@ -1,9 +1,11 @@
-import qdarkstyle
 import re
 from pathlib import Path
+
+import qdarkstyle
+
 FONTPLACEHOLDER = "$FONTPLACEHOLDER"
 FONTSIZEPLACEHOLDER = "$FONTSIZEPLACEHOLDER"
-STYLESHEETS = {False: qdarkstyle.LightPalette, True: qdarkstyle.DarkPalette}
+STYLESHEETS = {'light': qdarkstyle.LightPalette, 'dark': qdarkstyle.DarkPalette}
 PARAMETRIC_STYLESHEET_PATH = 'parametric_style.qss'
 
 
