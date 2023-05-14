@@ -1,9 +1,58 @@
 import functools
+import sys
+import traceback
 from pathlib import Path
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from doubleblind import __version__, blinding, gui_style
+
+
+class ErrorMessage(QtWidgets.QDialog):
+    def __init__(self, exc_type, exc_value, exc_tb, parent=None):
+        super().__init__(parent)
+        self.exception = exc_type, exc_value, exc_tb
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.widgets = {}
+        self.init_ui()
+
+    def init_ui(self):
+        self.setWindowTitle("Error")
+        self.setWindowIcon(self.style().standardIcon(QtWidgets.QStyle.SP_MessageBoxCritical))
+
+        self.widgets['error_label'] = QtWidgets.QLabel('<i>RNAlysis</i> has encountered the following error:')
+        self.layout.addWidget(self.widgets['error_label'])
+
+        self.widgets['error_summary'] = QtWidgets.QLabel(f'<b>{";".join(self.exception[1].args)}</b>')
+        self.widgets['error_summary'].setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.widgets['error_summary'].setWordWrap(True)
+        self.layout.addWidget(self.widgets['error_summary'])
+
+        self.layout.addSpacing(3)
+        self.widgets['full_text_label'] = QtWidgets.QLabel('Full error report:')
+        self.layout.addWidget(self.widgets['full_text_label'])
+
+        tb = "\n".join(traceback.format_exception(*self.exception))
+        self.widgets['error_text'] = QtWidgets.QPlainTextEdit(tb)
+        self.widgets['error_text'].setReadOnly(True)
+        self.layout.addWidget(self.widgets['error_text'])
+
+        self.widgets['ok_button'] = QtWidgets.QPushButton('OK')
+        self.widgets['ok_button'].clicked.connect(self.close)
+        self.layout.addWidget(self.widgets['ok_button'])
+
+        self.widgets['copy_button'] = QtWidgets.QPushButton('Copy to clipboard')
+        self.widgets['copy_button'].clicked.connect(self.copy_to_clipboard)
+        self.layout.addWidget(self.widgets['copy_button'])
+
+        self.widgets['copied_label'] = QtWidgets.QLabel()
+        self.layout.addWidget(self.widgets['copied_label'])
+
+    def copy_to_clipboard(self):
+        cb = QtWidgets.QApplication.clipboard()
+        cb.clear(mode=cb.Clipboard)
+        cb.setText("".join(traceback.format_exception(*self.exception)), mode=cb.Clipboard)
+        self.widgets['copied_label'].setText('Copied to clipboard')
 
 
 class HelpButton(QtWidgets.QToolButton):
@@ -254,6 +303,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(f'DoubleBlind {__version__}')
 
         self.settings = QtCore.QSettings('DoubleBlind', 'DoubleBlind')
+        self.error_window = None
 
         self.update_style_sheet()
         self.init_menus()
@@ -266,7 +316,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.settings.value('dark_mode') == 'dark':
             self.dark_mode_action.setChecked(True)
         self.dark_mode_action.triggered.connect(self.update_dark_mode)
-
 
         self.font_size_action = view_menu.addMenu('&Font size')
         group = QtGui.QActionGroup(self)
@@ -290,6 +339,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.clear()
         self.dark_mode_action.setChecked(False)
         self.update_style_sheet()
+
     @QtCore.pyqtSlot(bool)
     def update_dark_mode(self, dark_mode: bool):
         self.settings.setValue('dark_mode', 'dark' if dark_mode else 'light')
@@ -309,3 +359,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def check_for_updates(self, confirm_updated: bool = True):
         pass
+
+    def excepthook(self, exc_type, exc_value, exc_tb):  # pragma: no cover
+        sys.__excepthook__(exc_type, exc_value, exc_tb)
+        self.error_window = ErrorMessage(exc_type, exc_value, exc_tb, self)
+        self.error_window.exec()

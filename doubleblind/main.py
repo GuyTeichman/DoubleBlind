@@ -10,6 +10,7 @@ if __name__ == '__main__':
     app.setWindowIcon(QtGui.QIcon(icon_pth))
 
     window = gui.MainWindow()
+    sys.excepthook = window.excepthook
     window.show()
     window.check_for_updates(False)
 
