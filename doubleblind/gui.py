@@ -8,6 +8,104 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 import utils
 from doubleblind import __version__, blinding, gui_style
 
+class TextWithCopyButton(QtWidgets.QWidget):
+    __slots__ = {'text': 'text',
+                 'copy_button': 'copy button',
+                 'copied_label': 'label indicating when copy button was pressed',
+                 'layout': 'widget layout'}
+
+    def __init__(self, text: str, parent=None):
+        super().__init__(parent)
+        self.text = text
+        self.text_edit = QtWidgets.QTextBrowser(self)
+        self.copy_button = QtWidgets.QPushButton('Copy to clipboard')
+        self.copied_label = QtWidgets.QLabel()
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.init_ui()
+
+    def init_ui(self):
+        self.text_edit.setHtml(self.text)
+        self.text_edit.setReadOnly(True)
+        self.layout.addWidget(self.text_edit)
+        self.copy_button.clicked.connect(self.copy_to_clipboard)
+        self.layout.addWidget(self.copy_button)
+        self.layout.addWidget(self.copied_label)
+
+    def copy_to_clipboard(self):
+        cb = QtWidgets.QApplication.clipboard()
+        cb.clear(mode=cb.Clipboard)
+        cb.setText(self.text_edit.toPlainText())
+        self.copied_label.setText('Copied to clipboard')
+
+class HowToCiteWindow(QtWidgets.QDialog):
+    CITATION = """
+    Teichman, G., Ewe, CK., and Rechavi, O. (2023).
+    DoubleBlind: Blind and unblind file names automatically to maintain experimental integrity.
+    <br>
+    <a href=https://guyteichman.github.io/DoubleBlind>https://guyteichman.github.io/DoubleBlind</a>
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        img_path = str(Path(__file__).parent.joinpath('splash_transparent.png'))
+        text = f"""<p align="center"><b>DoubleBlind version {__version__}</b>
+                </p>
+                <br><br>
+                <img src="{img_path}" width="250"/>"""
+        self.label = QtWidgets.QLabel(text)
+
+        self.citation_labels = []
+        self.citations = []
+
+        txt = f"If you use DoubleBlind in your research, please cite:"
+        self.citation_labels.append(QtWidgets.QLabel(txt))
+        self.citations.append(TextWithCopyButton(self.CITATION))
+
+        self.ok_button = QtWidgets.QPushButton('Close')
+
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll_widget = QtWidgets.QWidget(self.scroll)
+        self.layout = QtWidgets.QVBoxLayout(self.scroll_widget)
+        self.init_ui()
+
+    def init_ui(self):
+        self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.scroll_widget)
+        self.layout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetMinAndMaxSize)
+
+        self.main_layout.addWidget(self.scroll)
+
+        self.setWindowTitle("How to cite DoubleBlind")
+        self.layout.addWidget(self.label)
+
+        for label, citation in zip(self.citation_labels, self.citations):
+            self.layout.addWidget(label)
+            self.layout.addWidget(citation)
+
+        self.ok_button.clicked.connect(self.close)
+        self.layout.addWidget(self.ok_button)
+
+
+class AboutWindow(QtWidgets.QMessageBox):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        img_path = str(Path(__file__).parent.joinpath('splash_transparent.png'))
+        text = f"""<br>
+                <p align="center"><b>DoubleBlind</b> version {__version__}</b>
+                </p>
+                <br><br>
+                <img src="{img_path}" width="500"/>
+                <p>
+                Development lead: Guy Teichman (<a href="mailto:guyteichman@gmail.com">guyteichman@gmail.com</a>)
+                </p>
+                <p>
+                Contributors: Chee Kiang (Ethan) Ewe
+                </p>"""
+        self.setText(text)
+        self.setWindowTitle("About DoubleBlind")
+        self.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+        self.buttonClicked.connect(self.close)
 
 class ErrorMessage(QtWidgets.QDialog):
     def __init__(self, exc_type, exc_value, exc_tb, parent=None):
@@ -305,6 +403,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.settings = QtCore.QSettings('DoubleBlind', 'DoubleBlind')
         self.error_window = None
+        self.about_window = AboutWindow(self)
+        self.cite_window = HowToCiteWindow(self)
 
         self.update_style_sheet()
         self.init_menus()
@@ -334,7 +434,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reset_action.triggered.connect(self.clear_settings)
 
         view_menu.addActions([self.dark_mode_action, self.reset_action])
+
         help_menu = self.menu_bar.addMenu('&Help')
+        self.about_action = QtGui.QAction('&About DoubleBlind')
+        self.about_action.triggered.connect(self.about)
+
+        self.update_action = QtGui.QAction('Check for &Updates...')
+        self.update_action.triggered.connect(functools.partial(self.check_for_updates, True))
+
+        self.cite_action = QtGui.QAction('How to &Cite DoubleBlind')
+        self.cite_action.triggered.connect(self.how_to_cite)
+
+        help_menu.addActions([self.update_action, self.about_action, self.cite_action])
+
+    def about(self):
+        self.about_window.exec()
+
+    def how_to_cite(self):
+        self.cite_window.exec()
 
     def clear_settings(self):
         self.settings.clear()
