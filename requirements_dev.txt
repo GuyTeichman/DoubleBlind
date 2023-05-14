@@ -8,7 +8,7 @@ coveralls
 py
 pytest
 pytest-runner
-sphinx_rtd_theme
+python_docs_theme
 pytest-qt
 pytest-xvfb
 typing_extensions
