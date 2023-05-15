@@ -7,7 +7,8 @@
 `Source code <https://github.com/GuyTeichman/DoubleBlind>`_ |
 `Bug reports <https://github.com/GuyTeichman/DoubleBlind/issues>`_ | |pipimage| | |versionssupported| | |githubactions| | |downloads|
 
-
+What is DoubleBlind?
+---------------------
 DoubleBlind is a software tool that automatically and reversibly replaces file names with random strings to help experimenters quantify microscopy experiments blindly and maintain experimental integrity.
 
 DoubleBlind aims to solve a common problem in scientific image quantification - keeping oneself blind to the experimental conditions.
