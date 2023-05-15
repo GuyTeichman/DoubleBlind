@@ -86,8 +86,8 @@ automodapi_inheritance_diagram = False
 
 autosummary_generate = True
 
-html_theme_options = {
-    'logo_only': True,
-    'display_version': True,
-    'prev_next_buttons_location': 'bottom',
-}
+# html_theme_options = {
+#     'logo_only': True,
+#     'display_version': True,
+#     'prev_next_buttons_location': 'bottom',
+# }

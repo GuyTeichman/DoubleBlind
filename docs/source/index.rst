@@ -6,15 +6,41 @@
 Welcome to DoubleBlind's documentation!
 =======================================
 
+----
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: About DoubleBlind:
+
+   What is DoubleBlind? <readme>
+   GitHub page <https://github.com/GuyTeichman/DoubleBlind>
 
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Starting with DoubleBlind:
 
-Indices and tables
-==================
+   installation
+   user_guide
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :maxdepth: 2
+   :caption: Change history:
+
+   history
+
+Programmatic interface:
+----------------------------
+.. autosummary::
+  :toctree:
+  :caption: Modules:
+
+  doubleblind.blinding
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Indices and tables:
+
+   genindex
+   api_reference

@@ -55,7 +55,7 @@ def test_get_file_list(generic_coder):
         if not match:
             expected_files.remove(file)
 
-    files = generic_coder.get_file_list()
+    files = generic_coder._get_file_list()
     assert len(files) == len(expected_files)
     assert set(file.name for file in files) == expected_files
 
@@ -72,7 +72,7 @@ def test_write_outfile(tmp_path):
     generic_coder = GenericCoder(Path("."))  # Using a dummy root_dir
 
     # Write the outfile
-    generic_coder.write_outfile(decode_dict, output_dir)
+    generic_coder._write_outfile(decode_dict, output_dir)
 
     # Read the outfile and verify its contents
     with open(output_file, "r") as file:
@@ -101,7 +101,7 @@ def test_get_coded_name(generic_coder, monkeypatch):
         return "new_name"
 
     monkeypatch.setattr(utils, 'encode_filename', mock_encode_filename)
-    new_name = generic_coder.get_coded_name(file_path, original_name, decode_dict)
+    new_name = generic_coder._get_coded_name(file_path, original_name, decode_dict)
 
     assert new_name == "new_name"
     assert not any(new_name in decoded for decoded, _ in decode_dict.values())

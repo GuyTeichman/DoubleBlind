@@ -1,4 +1,4 @@
-.. image:: docs/source/doubleblind.png
+.. image:: https://raw.githubusercontent.com/GuyTeichman/DOubleBlind/master/docs/source/doubleblind.png
     :target: https://guyteichman.github.io/DoubleBlind
     :width: 400
     :alt: logo
