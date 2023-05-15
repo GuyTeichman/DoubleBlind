@@ -84,9 +84,9 @@ class GenericCoder:
                 unblinded.append(editing.edit_excel(item, decode_dict))
             elif item.suffix in {'.csv', '.tsv', '.txt', '.json'}:
                 unblinded.append(editing.edit_text(item, decode_dict))
-        return unblinded
+        return [file for file in unblinded if file is not None]
 
-    def unblind(self, additional_files: Path):
+    def unblind(self, additional_files: Union[Path, None]):
         decode_dict = {}
         n_decoded = 0
         for file in self.get_file_list():
