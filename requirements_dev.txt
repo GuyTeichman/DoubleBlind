@@ -9,6 +9,7 @@ py
 pytest
 pytest-runner
 python_docs_theme
+pandas
 pytest-qt
 pytest-xvfb
 typing_extensions
