@@ -45,5 +45,5 @@ def edit_text(filename: Path, decode_dict: dict):
     if was_modified:
         mod_filename = get_mod_filename(filename)
         with open(mod_filename, 'w') as outfile:
-            outfile.write(text)
+            outfile.write(mod_text)
         return mod_filename
