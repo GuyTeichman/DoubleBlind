@@ -45,6 +45,7 @@ jobs:
         with:
           flag-name: run-${{ join(matrix.*, '-') }}
           parallel: true
+          path-to-lcov: .coverage
 
   finish:
       needs: test
