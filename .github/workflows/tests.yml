@@ -42,8 +42,6 @@ jobs:
         continue-on-error: true
       - name: Generate lcov file
         run: coverage lcov
-      - name: show directory
-        run: ls -ltr; ls -ltr tests
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
         with:
