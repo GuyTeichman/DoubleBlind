@@ -120,7 +120,7 @@ class ErrorMessage(QtWidgets.QDialog):
 
     def init_ui(self):
         self.setWindowTitle("Error")
-        self.setWindowIcon(self.style().standardIcon(QtWidgets.QStyle.SP_MessageBoxCritical))
+        self.setWindowIcon(self.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MessageBoxCritical))
 
         self.widgets['error_label'] = QtWidgets.QLabel('<i>RNAlysis</i> has encountered the following error:')
         self.layout.addWidget(self.widgets['error_label'])

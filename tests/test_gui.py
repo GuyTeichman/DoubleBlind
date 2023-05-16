@@ -1,6 +1,9 @@
 from doubleblind import __version__
 from doubleblind.gui import *
 
+LEFT_CLICK = QtCore.Qt.MouseButton.LeftButton
+RIGHT_CLICK = QtCore.Qt.MouseButton.RightButton
+
 
 def test_main_window(qtbot):
     main_window = MainWindow()
@@ -61,3 +64,72 @@ def test_update_font_size(qtbot):
     if test_action:
         test_action.trigger()
         assert main_window.settings.value('base_font_size') == test_size
+
+
+def test_ErrorMessage_message(qtbot):
+    err_text = 'my error text'
+    try:
+        raise ValueError(err_text)
+    except ValueError as e:
+        err_tb = e.__traceback__
+        err_value = e
+    dialog = ErrorMessage(ValueError, err_value, err_tb)
+    dialog.show()
+    qtbot.add_widget(dialog)
+    assert 'ValueError' in dialog.widgets['error_text'].toPlainText()
+    assert err_text in dialog.widgets['error_text'].toPlainText()
+
+
+def test_ErrorMessage_close(qtbot, monkeypatch):
+    closed = []
+
+    def mock_close(*args, **kwargs):
+        closed.append(1)
+
+    monkeypatch.setattr(ErrorMessage, 'close', mock_close)
+    err_text = 'my error text'
+    try:
+        raise ValueError(err_text)
+    except ValueError as e:
+        err_tb = e.__traceback__
+        err_value = e
+    dialog = ErrorMessage(ValueError, err_value, err_tb)
+    dialog.show()
+    qtbot.add_widget(dialog)
+    qtbot.mouseClick(dialog.widgets['ok_button'], LEFT_CLICK)
+
+    assert closed == [1]
+
+
+def test_ErrorMessage_copy_to_clipboard(qtbot, monkeypatch):
+    err_text = 'my error text'
+    try:
+        raise ValueError(err_text)
+    except ValueError as e:
+        err_tb = e.__traceback__
+        err_value = e
+
+    dialog = ErrorMessage(ValueError, err_value, err_tb)
+    dialog.show()
+    qtbot.add_widget(dialog)
+    qtbot.mouseClick(dialog.widgets['copy_button'], LEFT_CLICK)
+
+    assert 'ValueError' in QtWidgets.QApplication.clipboard().text()
+    assert err_text in QtWidgets.QApplication.clipboard().text()
+
+
+def test_AboutWindow(qtbot, monkeypatch):
+    window = AboutWindow()
+
+
+def test_HowToCiteWindow(qtbot, monkeypatch):
+    exit_calls = []
+
+    def mock_close(*args, **kwargs):
+        exit_calls.append(1)
+
+    monkeypatch.setattr(HowToCiteWindow, 'close', mock_close)
+
+    window = HowToCiteWindow()
+    qtbot.mouseClick(window.ok_button, LEFT_CLICK)
+    assert exit_calls == [1]
