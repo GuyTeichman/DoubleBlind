@@ -19,10 +19,11 @@ def edit_excel(filename: Path, decode_dict: dict):
         for row in ws.iter_rows():
             for cell in row:
                 if isinstance(cell.value, str):
-                    new_value = cell.value
+                    old_value = cell.value
+                    new_value = old_value
                     for coded, raw in decode_dict.items():
                         new_value = new_value.replace(coded, raw)
-                    if new_value != cell.value:
+                    if new_value != old_value:
                         was_modified = True
                         cell.value = new_value
 
