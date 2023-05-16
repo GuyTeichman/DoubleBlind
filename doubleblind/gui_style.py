@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Literal
 
 import qdarkstyle
 
@@ -26,7 +27,7 @@ def get_parametric_stylesheet(font_base_size: int, font_name: str):
     return style_text
 
 
-def get_stylesheet(font_name: str, font_base_size: int, dark_mode: bool):
+def get_stylesheet(font_name: str, font_base_size: int, dark_mode: Literal['light', 'dark']):
     palette = STYLESHEETS[dark_mode]
     param_stylesheet = get_parametric_stylesheet(font_base_size, font_name)
     other_stylesheet = qdarkstyle.load_stylesheet(qt_api='pyqt6', palette=palette)
