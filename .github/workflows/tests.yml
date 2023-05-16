@@ -1,6 +1,7 @@
 name: Build CI
 
-on: [ push, pull_request ]
+on: [ push, pull_request, workflow_dispatch ]
+
 
 env:
   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
@@ -50,10 +51,10 @@ jobs:
           path-to-lcov: ./coverage.lcov
 
   finish:
-      needs: test
-      if: ${{ always() }}
-      runs-on: ubuntu-latest
-      steps:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@v2
         with:
