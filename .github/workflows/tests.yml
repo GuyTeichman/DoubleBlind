@@ -40,14 +40,16 @@ jobs:
         run: |
           coverage run --source=doubleblind/ -m pytest tests/
         continue-on-error: true
+      - name: Generate lcov file
+        run: coverage lcov
       - name: show directory
-        run: ls -ltr
+        run: ls -ltr; ls -ltr tests
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
         with:
           flag-name: run-${{ join(matrix.*, '-') }}
           parallel: true
-          path-to-lcov: .coverage
+          path-to-lcov: ./coverage.lcov
 
   finish:
       needs: test
