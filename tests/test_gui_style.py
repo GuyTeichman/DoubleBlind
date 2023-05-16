@@ -33,7 +33,7 @@ def test_get_stylesheet_invalid_dark_mode(mocker):
     dark_mode = "True"
 
     # Mock STYLESHEETS
-    mocker.patch("gui_style.STYLESHEETS", {"light": qdarkstyle.LightPalette, "dark": qdarkstyle.DarkPalette})
+    mocker.patch("doubleblind.gui_style.STYLESHEETS", {"light": qdarkstyle.LightPalette, "dark": qdarkstyle.DarkPalette})
 
     with pytest.raises(KeyError):
         get_stylesheet(font_name, font_base_size, dark_mode)
