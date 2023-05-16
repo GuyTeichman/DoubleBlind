@@ -40,6 +40,8 @@ jobs:
         run: |
           coverage run --source=doubleblind/ -m pytest tests/
         continue-on-error: true
+      - name: show directory
+        run: ls -ltr
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
         with:
