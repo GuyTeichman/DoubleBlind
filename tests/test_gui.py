@@ -1,15 +1,8 @@
-import pytest
-
-from doubleblind.gui import *
 from doubleblind import __version__
-
-@pytest.fixture(scope='module')
-def app():
-    app = QtWidgets.QApplication([])
-    yield app
+from doubleblind.gui import *
 
 
-def test_main_window(app, qtbot):
+def test_main_window(qtbot):
     main_window = MainWindow()
     qtbot.addWidget(main_window)
 
@@ -19,7 +12,7 @@ def test_main_window(app, qtbot):
     assert isinstance(main_window.decode_tab, DecodeTab)
 
 
-def test_encode_tab(app, qtbot):
+def test_encode_tab(qtbot):
     encode_tab = EncodeTab()
     qtbot.addWidget(encode_tab)
 
@@ -30,7 +23,7 @@ def test_encode_tab(app, qtbot):
     assert encode_tab.file_types.count() == len(encode_tab.FILE_TYPES)
 
 
-def test_decode_tab(app, qtbot):
+def test_decode_tab(qtbot):
     decode_tab = DecodeTab()
     qtbot.addWidget(decode_tab)
 
@@ -40,7 +33,7 @@ def test_decode_tab(app, qtbot):
     assert decode_tab.file_types.count() == len(decode_tab.FILE_TYPES)
 
 
-def test_dark_mode(app, qtbot):
+def test_dark_mode(qtbot):
     main_window = MainWindow()
     qtbot.addWidget(main_window)
 
@@ -54,7 +47,7 @@ def test_dark_mode(app, qtbot):
     assert main_window.settings.value('dark_mode') == 'light'
 
 
-def test_update_font_size(app, qtbot):
+def test_update_font_size(qtbot):
     main_window = MainWindow()
     qtbot.addWidget(main_window)
 
