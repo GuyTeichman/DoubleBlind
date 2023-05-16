@@ -270,3 +270,180 @@ def test_unblind_additional_files_content():
     finally:
         for file in unblinded_files:
             file.unlink()
+
+
+@pytest.fixture(params=[True, False])
+def vsi_coder(request, tmp_path):
+    recursive = request.param
+    root_dir = tmp_path / "test_dir"
+    root_dir.mkdir()
+    (root_dir / "subdir").mkdir()
+
+    # Create some test VSI files, their conjugate folders and unrelated files/folders
+    files = [
+        root_dir / "file1.vsi",
+        root_dir / "_file1_",
+        root_dir / "file2.vsi",
+        root_dir / "_file2_",
+        root_dir / "subdir" / "file3.vsi",
+        root_dir / "subdir" / "_file3_",
+        root_dir / "unrelated_file.txt",
+        root_dir / "unrelated_folder",
+        root_dir / "file_without_conjugate.vsi",
+    ]
+
+    for file in files:
+        if file.suffix == '.vsi' or file.suffix == '.txt':
+            file.touch()
+        else:  # it's a directory
+            file.mkdir()
+
+    yield VSICoder(root_dir, recursive)
+
+    # Cleanup the test files
+    unlink_tree(root_dir)
+
+
+def test_vsi_get_file_list(vsi_coder):
+    recursive = vsi_coder.recursive
+    expected_files = {
+        "file1.vsi",
+        "file2.vsi",
+        "file3.vsi",
+    }
+    if not recursive:
+        expected_files.remove('file3.vsi')
+
+    files = vsi_coder._get_file_list()
+    assert len(files) == len(expected_files)
+    assert set(file.name for file in files) == expected_files
+
+
+#
+# def test_vsi_blind(vsi_coder, monkeypatch):
+#     recursive = vsi_coder.recursive
+#
+#     # Prepare the encoded files
+#     encode_dict = {
+#         "file1": 'decoded1',
+#         "file2": 'decoded2',
+#         "file3": 'decoded3',
+#     }
+#     exp_files = []
+#     for code, decoded in encode_dict.items():
+#         if code == 'file3' and not recursive:
+#             continue
+#         else:
+#             file_path = (vsi_coder.root_dir / decoded).with_suffix('.vsi')
+#             dir_path = vsi_coder.root_dir / f"_{decoded}_"
+#             exp_files.append(file_path)
+#             exp_files.append(dir_path)
+#
+#     # Mock the utils.decode_filename function to return the original name
+#     def mock_encode_filename(text):
+#         return encode_dict[text]
+#
+#     monkeypatch.setattr(utils, 'encode_filename', mock_encode_filename)
+#
+#     # Perform the blind operation
+#     vsi_coder.blind(None)
+#
+#     # Verify that the VSI files have been renamed correctly
+#     new_file_paths = set(str(file) for file in vsi_coder._get_file_list())
+#     exp_file_paths = set(str(file) for file in exp_files if file.suffix == '.vsi')
+#     assert new_file_paths == exp_file_paths
+#
+#     # Verify that the conjugate directories have been renamed correctly
+#     exp_dir_paths = set(str(file) for file in exp_files if file.suffix != '.vsi')
+#     all_dirs = set(str(dir_path) for dir_path in vsi_coder.root_dir.glob("**/") if "_" in dir_path.name)
+#     assert exp_dir_paths == all_dirs
+#
+#     # Verify that unrelated files and directories are untouched
+#     assert (vsi_coder.root_dir / "unrelated_file.txt").exists()
+#     assert (vsi_coder.root_dir / "unrelated_folder").exists()
+#     assert (vsi_coder.root_dir / "file_without_conjugate.vsi").exists()
+
+
+def test_vsi_unblind(vsi_coder, monkeypatch):
+    # Prepare the encoded files
+    encode_dict = {
+        "file1": 'decoded1',
+        "file2": 'decoded2',
+        "file3": 'decoded3',
+    }
+    exp_files = []
+    exp_dirs = []
+    for code, decoded in encode_dict.items():
+        if code == 'file3':
+            if vsi_coder.recursive:
+                file_path = (vsi_coder.root_dir / 'subdir' / decoded).with_suffix('.vsi')
+                dir_path = vsi_coder.root_dir / 'subdir' / f"_{decoded}_"
+            else:
+                file_path = None
+                dir_path = vsi_coder.root_dir / 'subdir' / f"_{code}_"
+        else:
+            file_path = (vsi_coder.root_dir / decoded).with_suffix('.vsi')
+            dir_path = vsi_coder.root_dir / f"_{decoded}_"
+        if file_path is not None:
+            exp_files.append(file_path)
+        exp_dirs.append(dir_path)
+
+    # Mock the utils.decode_filename function to return the original name
+    def mock_decode_filename(text):
+        return encode_dict[text]
+
+    monkeypatch.setattr(utils, 'decode_filename', mock_decode_filename)
+
+    # Perform the unblind operation
+    vsi_coder.unblind(None)
+
+    # Verify that the VSI files and directories have been renamed correctly
+    new_file_paths = set(str(file) for file in vsi_coder._get_file_list())
+    exp_file_paths = set(str(file) for file in exp_files)
+    assert new_file_paths == exp_file_paths
+    for this_dir in exp_dirs:
+        assert this_dir.exists()
+
+
+def test_vsi_blind(vsi_coder, monkeypatch):
+    # Prepare the encoded files
+    encode_dict = {
+        "file1": 'decoded1',
+        "file2": 'decoded2',
+        "file3": 'decoded3',
+    }
+    exp_files = []
+    exp_dirs = []
+    for code, decoded in encode_dict.items():
+        if code == 'file3':
+            if vsi_coder.recursive:
+                file_path = (vsi_coder.root_dir / 'subdir' / decoded).with_suffix('.vsi')
+                dir_path = vsi_coder.root_dir / 'subdir' / f"_{decoded}_"
+            else:
+                file_path = None
+                dir_path = vsi_coder.root_dir / 'subdir' / f"_{code}_"
+        else:
+            file_path = (vsi_coder.root_dir / decoded).with_suffix('.vsi')
+            dir_path = vsi_coder.root_dir / f"_{decoded}_"
+        if file_path is not None:
+            exp_files.append(file_path)
+        exp_dirs.append(dir_path)
+
+    # Mock the utils.encode_filename function to return the original name
+    def mock_encode_filename(text):
+        return encode_dict[text]
+
+    monkeypatch.setattr(utils, 'encode_filename', mock_encode_filename)
+
+    # Perform the blind operation
+    vsi_coder.blind(None)
+
+    # Verify that the VSI files have been renamed correctly
+    new_file_paths = set(str(file) for file in vsi_coder._get_file_list())
+    exp_file_paths = set(str(file) for file in exp_files if file.suffix == '.vsi')
+    assert new_file_paths == exp_file_paths
+
+    # Verify that the conjugate directories have been renamed correctly
+    all_dirs = set([dir_path for dir_path in vsi_coder.root_dir.glob("**/") if
+                    dir_path.name.startswith('_') and dir_path.name.endswith('_')])
+    assert set(exp_dirs) == all_dirs

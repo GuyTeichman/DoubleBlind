@@ -187,6 +187,7 @@ class VSICoder(GenericCoder):
             all subdirectories. Defaults to True.
 
     """
+
     def __init__(self, root_dir: Path, recursive: bool = True):
         super().__init__(root_dir, recursive, {'.vsi'})
 
@@ -195,7 +196,20 @@ class VSICoder(GenericCoder):
             files = [item for item in self.root_dir.glob('**/*.vsi')]
         else:
             files = [item for item in self.root_dir.iterdir() if item.is_file() and item.suffix.lower() == '.vsi']
-        return files
+
+        filtered_files = []
+        for file in files:
+            if self._get_conjugate_path(file).exists():
+                filtered_files.append(file)
+            else:
+                warnings.warn(f'Could not find the conjugate folder of file "{file.name}"')
+
+        return filtered_files
+
+    @staticmethod
+    def _get_conjugate_path(vsi_file: Path):
+        conj_folder_path = vsi_file.parent.joinpath(f"_{vsi_file.stem}_")
+        return conj_folder_path
 
     def blind(self, output_dir: Union[Path, Literal[None]] = None):
         assert self.root_dir.exists()
@@ -205,7 +219,7 @@ class VSICoder(GenericCoder):
             for file in self._get_file_list():
                 name = file.stem
                 file_path = file
-                conj_folder_path = file.parent.joinpath(f"_{file.stem}_")
+                conj_folder_path = self._get_conjugate_path(file)
 
                 if not conj_folder_path.exists():
                     warnings.warn(f'Could not find the conjugate folder of file "{name}"')
