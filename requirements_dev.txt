@@ -11,6 +11,7 @@ pytest-runner
 python_docs_theme
 pandas
 pytest-qt
+pytest-mock
 pytest-xvfb
 typing_extensions
 pyinstaller
