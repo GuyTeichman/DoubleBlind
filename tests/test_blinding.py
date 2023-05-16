@@ -235,7 +235,7 @@ def test_unblind_additional_files_edit(generic_coder, tmp_path, monkeypatch):
         "Unblinded Text file: file3.csv",
         "Unblinded Text file: file4.txt",
     ]
-    assert unblinded_files == expected_unblinded_files
+    assert sorted(unblinded_files) == sorted(expected_unblinded_files)
 
     # Cleanup the additional files
     for file in files:
