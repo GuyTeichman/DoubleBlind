@@ -2,6 +2,7 @@ import csv
 import fnmatch
 import itertools
 import warnings
+import zipfile
 from pathlib import Path
 from typing import Union, Literal, Set
 
@@ -116,7 +117,10 @@ class GenericCoder:
             if not item.is_file():
                 continue
             if item.suffix in {'.xls', '.xlsx'}:
-                unblinded.append(editing.edit_excel(item, decode_dict))
+                try:
+                    unblinded.append(editing.edit_excel(item, decode_dict))
+                except zipfile.BadZipfile:
+                    pass
             elif item.suffix in {'.csv', '.tsv', '.txt', '.json'}:
                 unblinded.append(editing.edit_text(item, decode_dict))
         return [file for file in unblinded if file is not None]
