@@ -382,7 +382,7 @@ class DecodeTab(TabPage):
         msg.setWindowTitle('Data un-blinded')
         text = 'Data was un-blinded successfully!'
         if len(others) > 0:
-            text += '\nThe folli=owing additional data files were unblinded:\n\n' + \
+            text += '\nThe folliowing additional data files were unblinded:\n\n' + \
                     '\n'.join([f"'{item.as_posix()}'" for item in others if item is not None])
             print(others)
             print(text)
