@@ -43,6 +43,7 @@ jobs:
 
     build:
         name: Build packages
+        permissions: write-all
         needs: createrelease
         runs-on: ${{ matrix.os }}
         strategy:
