@@ -362,6 +362,8 @@ class EncodeTab(TabPage):
 
 class DecodeTab(TabPage):
     PARAM_DESCS = TabPage.PARAM_DESCS.copy()
+    PARAM_DESCS[0] = ('file_types', 'File types to un-blind:',
+                       'Choose the type of files you want to un-blind. '),
     PARAM_DESCS.pop(3)
     PARAM_DESCS[3] = ('other_files', 'Replace blinded names in more files:\n(optional)',
                       'Folder with additional files (such as tables with quantification results) '
