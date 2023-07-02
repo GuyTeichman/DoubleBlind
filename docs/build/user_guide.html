@@ -70,6 +70,30 @@
                 </a>
             </p>
   <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">DoubleBlind User guide</a><ul>
+<li><a class="reference internal" href="#starting-the-doubleblind-app">Starting the DoubleBlind app</a><ul>
+<li><a class="reference internal" href="#blind-data">Blind Data</a></li>
+<li><a class="reference internal" href="#un-blind-data">Un-blind Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-options">Additional Options</a><ul>
+<li><a class="reference internal" href="#view">View</a></li>
+<li><a class="reference internal" href="#help">Help</a><ul>
+<li><a class="reference internal" href="#about-doubleblind">About DoubleBlind</a></li>
+<li><a class="reference internal" href="#how-to-cite-doubleblind">How to Cite DoubleBlind</a></li>
+<li><a class="reference internal" href="#check-for-updates">Check for Updates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="installation.html"
                           title="previous chapter">Installation</a></p>
@@ -158,6 +182,58 @@
             
   <section id="doubleblind-user-guide">
 <h1>DoubleBlind User guide<a class="headerlink" href="#doubleblind-user-guide" title="Permalink to this heading">¶</a></h1>
+<section id="starting-the-doubleblind-app">
+<h2>Starting the DoubleBlind app<a class="headerlink" href="#starting-the-doubleblind-app" title="Permalink to this heading">¶</a></h2>
+<p>When you first start the DoubleBlind application, you will see a window with two tabs: “Blind data” and “Un-blind data”.</p>
+<section id="blind-data">
+<h3>Blind Data<a class="headerlink" href="#blind-data" title="Permalink to this heading">¶</a></h3>
+<p>From the “Blind data” tab, you can encode (“blind”) your data, by replacing the original names of the files with randomly generated names.
+You can set the following options:</p>
+<ul class="simple">
+<li><p><strong>File types to blind</strong> – a dropdown menu to select the files type to blind. The common options include Olympus microscope images (.vsi) and image/video files (.tif,.png,.mp4, etc.) However, you can specify your file types by selecting “other file type”.</p></li>
+<li><p><strong>Input director</strong> – select a directory containing files you want to blind.</p></li>
+<li><p><strong>Output directory for a mapping table (optional)</strong> – select a directory to store a .csv file containing the encrypted names (encoded_name), original file names (decoded_name), as well as the paths to the blinded files. If this is not specified, the mapping file will be stored in the input directory. This file is for your reference only - DoubleBlind can unblind your data without it.</p></li>
+<li><p><strong>Apply to files in subfolders</strong> – if selected, blinding will be applied to all files of the same type in the subfolders, in addition to the ones at the top level.</p></li>
+</ul>
+<p>When you’re ready to blind your data, click on the “run” button.</p>
+</section>
+<section id="un-blind-data">
+<h3>Un-blind Data<a class="headerlink" href="#un-blind-data" title="Permalink to this heading">¶</a></h3>
+<p>In the “Un-blind data” tab, you can decode (“un-blind”) your data.
+DoubleBlind can decode a file using only its encoded name - no reference table is necessary, and you don’t have to un-blind all of your files at the same time.
+You can set the following options:</p>
+<ul class="simple">
+<li><p><strong>File types to un-blind</strong> – choose the file type to un-blind, which should be the same as your input.</p></li>
+<li><p><strong>Input directory</strong> – select the folder containing the blinded files.</p></li>
+<li><p><strong>Replace blinded names in more files</strong> – if selected, DoubleBlind will read through data files (.txt, .csv, xlsx, etc.) in the specified directory, and replace all occurances of the encoded names in these data files with the original names. This is useful when you store your blinded quantification results in an Excel files, and want to un-blind the names in that file.</p></li>
+<li><p><strong>Apply to files in subfolders</strong> – if selected, unblinding will be applied to all files of the same type in the subfolders, in addition to the ones in the top level.</p></li>
+</ul>
+<p>When you’re ready to un-blind your data, click on the “run” button.</p>
+</section>
+</section>
+<section id="additional-options">
+<h2>Additional Options<a class="headerlink" href="#additional-options" title="Permalink to this heading">¶</a></h2>
+<p>On the top of the main window, you will find a menu bar with the options “View” and “Help”.</p>
+<section id="view">
+<h3>View<a class="headerlink" href="#view" title="Permalink to this heading">¶</a></h3>
+<p>Under “View”, you have options to toggle “Dark mode”, change “Font size”, and “Reset view settings”.</p>
+</section>
+<section id="help">
+<h3>Help<a class="headerlink" href="#help" title="Permalink to this heading">¶</a></h3>
+<section id="about-doubleblind">
+<h4>About DoubleBlind<a class="headerlink" href="#about-doubleblind" title="Permalink to this heading">¶</a></h4>
+<p>When you click on “About DoubleBlind”, a window will open that shows information about the version of DoubleBlind, the development lead, and contributors.</p>
+</section>
+<section id="how-to-cite-doubleblind">
+<h4>How to Cite DoubleBlind<a class="headerlink" href="#how-to-cite-doubleblind" title="Permalink to this heading">¶</a></h4>
+<p>If you click on “How to Cite DoubleBlind”, a window will open that shows the citation format for DoubleBlind.</p>
+</section>
+<section id="check-for-updates">
+<h4>Check for Updates<a class="headerlink" href="#check-for-updates" title="Permalink to this heading">¶</a></h4>
+<p>If you click on “Check for Updates”, DoubleBlind will check if there’s a new version available and will ask if you wish to download it.</p>
+</section>
+</section>
+</section>
 </section>
 
 
@@ -170,6 +246,30 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/doubleblind.png" alt="Logo"/>
             </a></p>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">DoubleBlind User guide</a><ul>
+<li><a class="reference internal" href="#starting-the-doubleblind-app">Starting the DoubleBlind app</a><ul>
+<li><a class="reference internal" href="#blind-data">Blind Data</a></li>
+<li><a class="reference internal" href="#un-blind-data">Un-blind Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-options">Additional Options</a><ul>
+<li><a class="reference internal" href="#view">View</a></li>
+<li><a class="reference internal" href="#help">Help</a><ul>
+<li><a class="reference internal" href="#about-doubleblind">About DoubleBlind</a></li>
+<li><a class="reference internal" href="#how-to-cite-doubleblind">How to Cite DoubleBlind</a></li>
+<li><a class="reference internal" href="#check-for-updates">Check for Updates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="installation.html"
