@@ -54,17 +54,17 @@ jobs:
                       CMD_BUILD: >
                           pyinstaller DoubleBlind.spec &&
                           cd dist/ &&
-                          zip -r DoubleBlind-1.0.1_macos.zip ./DoubleBlind* &&
+                          zip -r DoubleBlind-1.1.0_macos.zip ./DoubleBlind* &&
                           ls -ltr
-                      OUT_FILE_NAME: DoubleBlind-1.0.1_macos.zip
+                      OUT_FILE_NAME: DoubleBlind-1.1.0_macos.zip
                       ASSET_MIME: application/zip
                     -   os: windows-latest
                         TARGET: windows
                         CMD_BUILD: >
                             pyinstaller DoubleBlind.spec &&
                             cd dist/ &&
-                            7z a DoubleBlind-1.0.1_windows.zip -r "DoubleBlind.exe"
-                        OUT_FILE_NAME: DoubleBlind-1.0.1_windows.zip
+                            7z a DoubleBlind-1.1.0_windows.zip -r "DoubleBlind.exe"
+                        OUT_FILE_NAME: DoubleBlind-1.1.0_windows.zip
                         ASSET_MIME: application/zip
         steps:
             -   name: Checkout repository

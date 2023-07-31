@@ -59,5 +59,5 @@ exe = EXE(
 #         strip=False,
 #         upx=True,
 #         upx_exclude=[],
-#         name='DoubleBlind-1.0.1',
+#         name='DoubleBlind-1.1.0',
 #     )
