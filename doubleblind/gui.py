@@ -3,6 +3,7 @@ import sys
 import traceback
 from pathlib import Path
 
+import pandas as pd
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from doubleblind import __version__, blinding, gui_style, utils
@@ -122,7 +123,7 @@ class ErrorMessage(QtWidgets.QDialog):
         self.setWindowTitle("Error")
         self.setWindowIcon(self.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MessageBoxCritical))
 
-        self.widgets['error_label'] = QtWidgets.QLabel('<i>RNAlysis</i> has encountered the following error:')
+        self.widgets['error_label'] = QtWidgets.QLabel('<i>DoubleBlind</i> has encountered the following error:')
         self.layout.addWidget(self.widgets['error_label'])
 
         self.widgets['error_summary'] = QtWidgets.QLabel(f'<b>{";".join(self.exception[1].args)}</b>')
@@ -439,6 +440,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         view_menu.addActions([self.dark_mode_action, self.reset_action])
 
+        action_menu = self.menu_bar.addMenu('&Manual actions')
+
+        self.manual_blind_action = QtGui.QAction('&Blind manually')
+        self.manual_blind_action.triggered.connect(self.blind_manually)
+        self.manual_unblind_action = QtGui.QAction('&Un-blind manually')
+        self.manual_unblind_action.triggered.connect(self.unblind_manually)
+
+        action_menu.addActions([self.manual_blind_action, self.manual_unblind_action])
+
         help_menu = self.menu_bar.addMenu('&Help')
         self.about_action = QtGui.QAction('&About DoubleBlind')
         self.about_action.triggered.connect(self.about)
@@ -450,6 +460,62 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cite_action.triggered.connect(self.how_to_cite)
 
         help_menu.addActions([self.update_action, self.about_action, self.cite_action])
+
+    def unblind_manually(self):
+        dialog_title = "Input Encoded Names"
+        dialog_message = "Please enter one or more encoded names (one name per line):"
+        text, accepted = QtWidgets.QInputDialog.getMultiLineText(self, dialog_title, dialog_message)
+
+        if accepted:
+            if text.strip():
+                names = text.split('\n')
+                decode_dict = {}
+
+                for name in names:
+                    decode_dict[name] = utils.decode_filename(name)
+
+                file_name, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save CSV File",
+                                                                     "doubleblind_manual_decoding.csv",
+                                                                     "CSV Files (*.csv);;All Files (*)")
+
+                if file_name:
+                    df = pd.DataFrame(list(decode_dict.items()), columns=["encoded name", "decoded name"])
+                    df.to_csv(file_name, index=False)
+                    msg = QtWidgets.QMessageBox(self)
+                    msg.setWindowTitle('Data unblinded')
+                    msg.setText(f'Decoding data has been successfully saved to "{file_name}".')
+                    msg.exec()
+
+            else:
+                QtWidgets.QMessageBox.warning(self, "No names submitted", "No encoded names were submitted!")
+
+    def blind_manually(self):
+        dialog_title = "Input Names"
+        dialog_message = "Please enter one or more names (one name per line):"
+        text, accepted = QtWidgets.QInputDialog.getMultiLineText(self, dialog_title, dialog_message)
+
+        if accepted:
+            if text.strip():
+                names = text.split('\n')
+                encode_dict = {}
+
+                for name in names:
+                    encode_dict[name] = utils.encode_filename(name)
+
+                file_name, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save CSV File",
+                                                                     "doubleblind_manual_encoding.csv",
+                                                                     "CSV Files (*.csv);;All Files (*)")
+
+                if file_name:
+                    df = pd.DataFrame(list(encode_dict.items()), columns=["original name", "encoded name"])
+                    df.to_csv(file_name, index=False)
+                    msg = QtWidgets.QMessageBox(self)
+                    msg.setWindowTitle('Data blinded')
+                    msg.setText(f'Encoding data has been successfully saved to "{file_name}".')
+                    msg.exec()
+
+            else:
+                QtWidgets.QMessageBox.warning(self, "No names submitted", "No decoded names were submitted!")
 
     def about(self):
         self.about_window.exec()
