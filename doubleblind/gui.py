@@ -550,10 +550,10 @@ class MainWindow(QtWidgets.QMainWindow):
             reply = QtWidgets.QMessageBox.question(self, 'A new version is available',
                                                    'A new version of DoubleBlind is available! '
                                                    'Do you wish to download it?')
-            if reply == QtWidgets.QMessageBox.Yes:
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes.value:
                 url = QtCore.QUrl('https://github.com/GuyTeichman/DoubleBlind/releases/latest')
                 if not QtGui.QDesktopServices.openUrl(url):
-                    QtGui.QMessageBox.warning(self, 'Connection failed', 'Could not download new version')
+                    QtWidgets.QMessageBox.warning(self, 'Connection failed', 'Could not download new version')
             return
 
         if confirm_updated:

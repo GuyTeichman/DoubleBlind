@@ -2,6 +2,10 @@
 History
 =======
 
+1.1.1 (2024-01-16)
+------------------
+Fixed bug that would cause the application to crash when attempting to update the DoubleBlind app.
+
 1.1.0 (2023-07-31)
 ------------------
 Added a 'Manual actions' menu that allows the user to manually blind or unblind names.
